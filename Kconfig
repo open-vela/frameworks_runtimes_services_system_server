@@ -16,7 +16,7 @@
 
 config SYSTEM_SERVER
 	tristate "Enable system server"
-	default y
+	default n
 	depends on ANDROID_BINDER
 
 if SYSTEM_SERVER
