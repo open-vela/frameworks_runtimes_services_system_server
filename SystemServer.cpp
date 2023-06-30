@@ -22,6 +22,8 @@
 #include <utils/Log.h>
 #include <utils/String8.h>
 
+#include "WindowManagerService.h"
+
 using namespace android;
 using android::binder::Status;
 
@@ -34,6 +36,14 @@ extern "C" int main(int argc, char **argv) {
     ALOGI("systemd: defaultServiceManager(): %p", sm.get());
 
     // TODO: for ams/wms
+#ifdef CONFIG_SYSTEM_WINDOW_SERVICE
+    sp<os::wm::WindowManagerService> wms = sp<os::wm::WindowManagerService>::make();
+    auto status = sm->addService(String16(os::wm::WindowManagerService::name()), wms);
+    if (status != 0) {
+        ALOGE("Failed to add service window");
+        return -1;
+    }
+#endif
 
     // start worker thread
     ProcessState::self()->startThreadPool();
