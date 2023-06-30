@@ -25,6 +25,7 @@ PRIORITY  = $(CONFIG_SYSTEM_SERVER_PRIORITY)
 STACKSIZE = $(CONFIG_SYSTEM_SERVER_STACKSIZE)
 
 ifneq ($(CONFIG_SYSTEM_SERVER),)
+  LIBS += -L$(APPDIR)/staging -lframework
   MAINSRC   += SystemServer.cpp
   PROGNAME  += systemd
 endif

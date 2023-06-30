@@ -16,4 +16,5 @@
 
 ifneq ($(CONFIG_SYSTEM_SERVER),)
 CONFIGURED_APPS += $(APPDIR)/frameworks/base/system_server
+CXXFLAGS += ${INCDIR_PREFIX}$(APPDIR)/frameworks/base/wm/server
 endif
