@@ -23,6 +23,9 @@
 #include <utils/String8.h>
 
 #include "WindowManagerService.h"
+#include "am/ActivityManagerService.h"
+#include "app/ActivityManager.h"
+#include "pm/PackageManagerService.h"
 
 using namespace android;
 using android::binder::Status;
@@ -35,18 +38,26 @@ extern "C" int main(int argc, char **argv) {
     sp<IServiceManager> sm(defaultServiceManager());
     ALOGI("systemd: defaultServiceManager(): %p", sm.get());
 
-    // TODO: for ams/wms
+#ifdef CONFIG_SYSTEM_PACKAGE_SERVICE
+    sp<::os::pm::PackageManagerService> pms = new ::os::pm::PackageManagerService();
+    sm->addService(::os::pm::PackageManagerService::name(), pms);
+#endif
+
+#ifdef CONFIG_SYSTEM_ACTIVITY_SERVICE
+    sp<::os::am::ActivityManagerService> ams = new ::os::am::ActivityManagerService();
+    sm->addService(String16(::os::app::ActivityManager::name()), ams);
+#endif
+
 #ifdef CONFIG_SYSTEM_WINDOW_SERVICE
-    sp<os::wm::WindowManagerService> wms = sp<os::wm::WindowManagerService>::make();
-    auto status = sm->addService(String16(os::wm::WindowManagerService::name()), wms);
-    if (status != 0) {
-        ALOGE("Failed to add service window");
-        return -1;
-    }
+    sp<::os::wm::WindowManagerService> wms = sp<::os::wm::WindowManagerService>::make();
+    sm->addService(String16(::os::wm::WindowManagerService::name()), wms);
 #endif
 
     // start worker thread
     ProcessState::self()->startThreadPool();
+#ifdef CONFIG_SYSTEM_ACTIVITY_SERVICE
+    ams->systemReady();
+#endif
 
     // join the main thread
     IPCThreadState::self()->joinThreadPool();
