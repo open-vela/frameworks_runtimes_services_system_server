@@ -15,17 +15,25 @@
  */
 
 #define LOG_TAG "systemd"
-
 #include <binder/IPCThreadState.h>
 #include <binder/IServiceManager.h>
 #include <binder/ProcessState.h>
+#include <nuttx/config.h>
 #include <utils/Log.h>
 #include <utils/String8.h>
 
+#ifdef CONFIG_SYSTEM_WINDOW_SERVICE
 #include "WindowManagerService.h"
+#endif
+
+#ifdef CONFIG_SYSTEM_PACKAGE_SERVICE
+#include "pm/PackageManagerService.h"
+#endif
+
+#ifdef CONFIG_SYSTEM_ACTIVITY_SERVICE
 #include "am/ActivityManagerService.h"
 #include "app/ActivityManager.h"
-#include "pm/PackageManagerService.h"
+#endif
 
 using namespace android;
 using android::binder::Status;
