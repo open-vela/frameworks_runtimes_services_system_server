@@ -20,6 +20,7 @@
 #include <binder/ProcessState.h>
 #include <nuttx/config.h>
 #include <utils/Log.h>
+#include <utils/Looper.h>
 #include <utils/String8.h>
 
 #ifdef CONFIG_SYSTEM_WINDOW_SERVICE
@@ -38,9 +39,22 @@
 using namespace android;
 using android::binder::Status;
 
-extern "C" int main(int argc, char **argv) {
-    // create ProcessState
-    sp<ProcessState> proc(ProcessState::self());
+static int binderCallback(int /*fd*/, int /*events*/, void* /*data*/) {
+    IPCThreadState::self()->handlePolledCommands();
+    return 1;
+}
+
+extern "C" int main(int argc, char** argv) {
+    sp<Looper> looper = Looper::prepare(0);
+
+    int fd = -1;
+    IPCThreadState::self()->setupPolling(&fd);
+    if (fd < 0) {
+        ALOGE("Cann't get binder fd!!!");
+        return -1;
+    }
+
+    looper->addFd(fd, Looper::POLL_CALLBACK, Looper::EVENT_INPUT, binderCallback, nullptr);
 
     // obtain service manager
     sp<IServiceManager> sm(defaultServiceManager());
@@ -61,13 +75,12 @@ extern "C" int main(int argc, char **argv) {
     sm->addService(String16(::os::wm::WindowManagerService::name()), wms);
 #endif
 
-    // start worker thread
-    ProcessState::self()->startThreadPool();
 #ifdef CONFIG_SYSTEM_ACTIVITY_SERVICE
     ams->systemReady();
 #endif
 
-    // join the main thread
-    IPCThreadState::self()->joinThreadPool();
+    while (true) {
+        looper->pollAll(-1);
+    }
     return 0;
 }
