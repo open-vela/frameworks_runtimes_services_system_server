@@ -23,6 +23,8 @@
 #include <utils/Looper.h>
 #include <utils/String8.h>
 
+#include "BaseProfiler.h"
+
 #ifdef CONFIG_SYSTEM_WINDOW_SERVICE
 #include "WindowManagerService.h"
 #endif
@@ -45,9 +47,14 @@ static int binderCallback(int /*fd*/, int /*events*/, void* /*data*/) {
 }
 
 extern "C" int main(int argc, char** argv) {
+#ifdef CONFIG_SYSTEM_SERVER_USE_PROFILER
+    up_perf_init((void*)up_perf_getfreq());
+#endif
+
     sp<Looper> looper = Looper::prepare(0);
 
     int fd = -1;
+
     IPCThreadState::self()->setupPolling(&fd);
     if (fd < 0) {
         ALOGE("Cann't get binder fd!!!");
@@ -82,5 +89,7 @@ extern "C" int main(int argc, char** argv) {
     while (true) {
         looper->pollAll(-1);
     }
+
+    looper->removeFd(fd);
     return 0;
 }
