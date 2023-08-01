@@ -15,7 +15,7 @@
 #
 
 config SYSTEM_SERVER
-	tristate "Enable system server"
+	tristate "Enable System Server"
 	default n
 	depends on ANDROID_BINDER
 
@@ -28,5 +28,9 @@ config SYSTEM_SERVER_STACKSIZE
 config SYSTEM_SERVER_PRIORITY
 	int "System server priority"
 	default 100
+
+config SYSTEM_SERVER_USE_PROFILER
+    bool "Runtime profiler"
+    default n
 
 endif
