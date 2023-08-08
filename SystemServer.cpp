@@ -83,6 +83,7 @@ extern "C" int main(int argc, char** argv) {
 #endif
 
 #ifdef CONFIG_SYSTEM_ACTIVITY_SERVICE
+    ams->setWindowManager(wms);
     ams->systemReady();
 #endif
 
