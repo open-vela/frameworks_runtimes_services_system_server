@@ -27,7 +27,7 @@ config SYSTEM_SERVER_STACKSIZE
 
 config SYSTEM_SERVER_PRIORITY
 	int "System server priority"
-	default 100
+	default 120
 
 config SYSTEM_SERVER_USE_PROFILER
     bool "Runtime profiler"
