@@ -23,8 +23,6 @@
 #include <utils/Looper.h>
 #include <utils/String8.h>
 
-#include "BaseProfiler.h"
-
 #ifdef CONFIG_SYSTEM_WINDOW_SERVICE
 #include "WindowManagerService.h"
 #endif
