@@ -16,52 +16,10 @@
 
 #pragma once
 
-#include <nuttx/config.h>
+#include <nuttx/trace.h>
 
-#ifdef CONFIG_SYSTEM_SERVER_USE_PROFILER
+#define PM_PROFILER_BEGIN() app_trace_begin();
+#define PM_PROFILER_END() app_trace_end();
 
-#include <nuttx/sched_note.h>
-
-#define BASE_PROFILER_BEGIN() sched_note_begin(NOTE_TAG_ALWAYS);
-#define BASE_PROFILER_END() sched_note_end(NOTE_TAG_ALWAYS);
-#define BASE_PROFILER_BEGINEX(str) sched_note_beginex(NOTE_TAG_ALWAYS, str);
-#define BASE_PROFILER_ENDEX(str) sched_note_endex(NOTE_TAG_ALWAYS, str);
-
-#define WM_PROFILER_BEGIN() sched_note_begin(NOTE_TAG_GRAPHICS);
-#define WM_PROFILER_END() sched_note_end(NOTE_TAG_GRAPHICS);
-#define WM_PROFILER_BEGINEX(str) sched_note_beginex(NOTE_TAG_GRAPHICS, str);
-#define WM_PROFILER_ENDEX(str) sched_note_endex(NOTE_TAG_GRAPHICS, str);
-
-#define PM_PROFILER_BEGIN() sched_note_begin(NOTE_TAG_APP);
-#define PM_PROFILER_END() sched_note_end(NOTE_TAG_APP);
-#define PM_PROFILER_BEGINEX(str) sched_note_beginex(NOTE_TAG_APP, str);
-#define PM_PROFILER_ENDEX(str) sched_note_endex(NOTE_TAG_APP, str);
-
-#define AM_PROFILER_BEGIN() sched_note_begin(NOTE_TAG_APP);
-#define AM_PROFILER_END() sched_note_end(NOTE_TAG_APP);
-#define AM_PROFILER_BEGINEX(str) sched_note_beginex(NOTE_TAG_APP, str);
-#define AM_PROFILER_ENDEX(str) sched_note_endex(NOTE_TAG_APP, str);
-
-#else
-
-#define BASE_PROFILER_BEGIN()
-#define BASE_PROFILER_END()
-#define BASE_PROFILER_BEGINEX(str)
-#define BASE_PROFILER_ENDEX(str)
-
-#define WM_PROFILER_BEGIN()
-#define WM_PROFILER_END()
-#define WM_PROFILER_BEGINEX(str)
-#define WM_PROFILER_ENDEX(str)
-
-#define PM_PROFILER_BEGIN()
-#define PM_PROFILER_END()
-#define PM_PROFILER_BEGINEX(str)
-#define PM_PROFILER_ENDEX(str)
-
-#define AM_PROFILER_BEGIN()
-#define AM_PROFILER_END()
-#define AM_PROFILER_BEGINEX(str)
-#define AM_PROFILER_ENDEX(str)
-
-#endif
+#define AM_PROFILER_BEGIN() app_trace_begin();
+#define AM_PROFILER_END() app_trace_end();
