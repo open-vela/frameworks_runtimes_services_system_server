@@ -39,9 +39,8 @@
 using namespace android;
 using android::binder::Status;
 
-static int binderCallback(int /*fd*/, int /*events*/, void* /*data*/) {
+static void binderPollCallback(uv_poll_t* /*handle*/, int /*status*/, int /*events*/) {
     IPCThreadState::self()->handlePolledCommands();
-    return 1;
 }
 
 extern "C" int main(int argc, char** argv) {
@@ -49,17 +48,18 @@ extern "C" int main(int argc, char** argv) {
     up_perf_init((void*)up_perf_getfreq());
 #endif
 
-    sp<Looper> looper = Looper::prepare(0);
+    uv_loop_t uvLooper;
+    uv_poll_t binderPoll;
+    int binderFd = -1;
 
-    int fd = -1;
-
-    IPCThreadState::self()->setupPolling(&fd);
-    if (fd < 0) {
+    uv_loop_init(&uvLooper);
+    IPCThreadState::self()->setupPolling(&binderFd);
+    if (binderFd < 0) {
         ALOGE("Cann't get binder fd!!!");
         return -1;
     }
-
-    looper->addFd(fd, Looper::POLL_CALLBACK, Looper::EVENT_INPUT, binderCallback, nullptr);
+    uv_poll_init(&uvLooper, &binderPoll, binderFd);
+    uv_poll_start(&binderPoll, UV_WRITABLE, binderPollCallback);
 
     // obtain service manager
     sp<IServiceManager> sm(defaultServiceManager());
@@ -76,7 +76,7 @@ extern "C" int main(int argc, char** argv) {
 #endif
 
 #ifdef CONFIG_SYSTEM_WINDOW_SERVICE
-    sp<::os::wm::WindowManagerService> wms = sp<::os::wm::WindowManagerService>::make();
+    sp<::os::wm::WindowManagerService> wms = sp<::os::wm::WindowManagerService>::make(&uvLooper);
     sm->addService(String16(::os::wm::WindowManagerService::name()), wms);
 #endif
 
@@ -85,10 +85,6 @@ extern "C" int main(int argc, char** argv) {
     ams->systemReady();
 #endif
 
-    while (true) {
-        looper->pollAll(-1);
-    }
-
-    looper->removeFd(fd);
+    uv_run(&uvLooper, UV_RUN_DEFAULT);
     return 0;
 }
