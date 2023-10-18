@@ -18,6 +18,7 @@ config SYSTEM_SERVER
 	tristate "Enable System Server"
 	default n
 	depends on ANDROID_BINDER
+	depends on LIBUV
 
 if SYSTEM_SERVER
 
