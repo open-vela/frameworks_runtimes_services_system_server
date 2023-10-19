@@ -71,7 +71,7 @@ extern "C" int main(int argc, char** argv) {
 #endif
 
 #ifdef CONFIG_SYSTEM_ACTIVITY_SERVICE
-    sp<::os::am::ActivityManagerService> ams = new ::os::am::ActivityManagerService();
+    sp<::os::am::ActivityManagerService> ams = new ::os::am::ActivityManagerService(&uvLooper);
     sm->addService(String16(::os::app::ActivityManager::name()), ams);
 #endif
 
