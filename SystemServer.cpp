@@ -59,7 +59,7 @@ extern "C" int main(int argc, char** argv) {
         return -1;
     }
     uv_poll_init(&uvLooper, &binderPoll, binderFd);
-    uv_poll_start(&binderPoll, UV_WRITABLE, binderPollCallback);
+    uv_poll_start(&binderPoll, UV_READABLE, binderPollCallback);
 
     // obtain service manager
     sp<IServiceManager> sm(defaultServiceManager());
