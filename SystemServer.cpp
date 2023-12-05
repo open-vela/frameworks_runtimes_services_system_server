@@ -22,6 +22,7 @@
 #include <utils/Log.h>
 #include <utils/Looper.h>
 #include <utils/String8.h>
+#include <uv.h>
 
 #ifdef CONFIG_SYSTEM_WINDOW_SERVICE
 #include "WindowManagerService.h"
