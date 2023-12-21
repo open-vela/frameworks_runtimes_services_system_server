@@ -22,9 +22,13 @@ config SYSTEM_SERVER
 
 if SYSTEM_SERVER
 
+config SYSTEM_SERVER_APP_STATCKSIZE
+	int "systemd and app default stack size"
+	default 8192
+
 config SYSTEM_SERVER_STACKSIZE
 	int "System server stack size"
-	default DEFAULT_TASK_STACKSIZE
+	default SYSTEM_SERVER_APP_STATCKSIZE
 
 config SYSTEM_SERVER_PRIORITY
 	int "System server priority"
