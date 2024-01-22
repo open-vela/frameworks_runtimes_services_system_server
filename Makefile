@@ -25,9 +25,22 @@ PRIORITY  = $(CONFIG_SYSTEM_SERVER_PRIORITY)
 STACKSIZE = $(CONFIG_SYSTEM_SERVER_STACKSIZE)
 
 ifneq ($(CONFIG_SYSTEM_SERVER),)
-  LIBS += -L$(APPDIR)/staging -lframework
-  MAINSRC   += SystemServer.cpp
-  PROGNAME  += systemd
+LIBS += -L$(APPDIR)/staging -lxms
+MAINSRC   += SystemServer.cpp
+PROGNAME  += systemd
 endif
+
+ASRCS := $(wildcard $(ASRCS))
+CSRCS := $(wildcard $(CSRCS))
+CXXSRCS := $(wildcard $(CXXSRCS))
+MAINSRC := $(wildcard $(MAINSRC))
+
+NOEXPORTSRCS = $(ASRCS)$(CSRCS)$(CXXSRCS)$(MAINSRC)
+
+ifneq ($(NOEXPORTSRCS),)
+BIN := $(APPDIR)/staging/libsystemd.a
+endif
+
+EXPORT_FILES :=
 
 include $(APPDIR)/Application.mk
