@@ -37,6 +37,10 @@
 #include "app/ActivityManager.h"
 #endif
 
+#ifdef CONFIG_SYSTEM_BRIGHTNESS_SERVICE
+#include "brightness_service.h"
+#endif
+
 using namespace android;
 using android::binder::Status;
 
@@ -61,6 +65,10 @@ extern "C" int main(int argc, char** argv) {
     }
     uv_poll_init(&uvLooper, &binderPoll, binderFd);
     uv_poll_start(&binderPoll, UV_READABLE, binderPollCallback);
+
+#ifdef CONFIG_SYSTEM_BRIGHTNESS_SERVICE
+    brightness_service_start(&uvLooper);
+#endif
 
     // obtain service manager
     sp<IServiceManager> sm(defaultServiceManager());
@@ -87,5 +95,9 @@ extern "C" int main(int argc, char** argv) {
 #endif
 
     uv_run(&uvLooper, UV_RUN_DEFAULT);
+
+#ifdef CONFIG_SYSTEM_BRIGHTNESS_SERVICE
+    brightness_service_stop();
+#endif
     return 0;
 }
