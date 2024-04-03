@@ -38,7 +38,7 @@
 #endif
 
 #ifdef CONFIG_SYSTEM_BRIGHTNESS_SERVICE
-#include "brightness_service.h"
+#include <BrightnessService.h>
 #endif
 
 using namespace android;
@@ -66,13 +66,15 @@ extern "C" int main(int argc, char** argv) {
     uv_poll_init(&uvLooper, &binderPoll, binderFd);
     uv_poll_start(&binderPoll, UV_READABLE, binderPollCallback);
 
-#ifdef CONFIG_SYSTEM_BRIGHTNESS_SERVICE
-    brightness_service_start(&uvLooper);
-#endif
-
     // obtain service manager
     sp<IServiceManager> sm(defaultServiceManager());
     ALOGI("systemd: defaultServiceManager(): %p", sm.get());
+
+#ifdef CONFIG_SYSTEM_BRIGHTNESS_SERVICE
+    sp<::os::brightness::BrightnessService> brightness =
+            sp<::os::brightness::BrightnessService>::make(&uvLooper);
+    sm->addService(::os::brightness::BrightnessService::name(), brightness);
+#endif
 
 #ifdef CONFIG_SYSTEM_PACKAGE_SERVICE
     sp<::os::pm::PackageManagerService> pms = new ::os::pm::PackageManagerService();
@@ -95,9 +97,5 @@ extern "C" int main(int argc, char** argv) {
 #endif
 
     uv_run(&uvLooper, UV_RUN_DEFAULT);
-
-#ifdef CONFIG_SYSTEM_BRIGHTNESS_SERVICE
-    brightness_service_stop();
-#endif
     return 0;
 }
