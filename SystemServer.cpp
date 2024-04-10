@@ -61,6 +61,7 @@ extern "C" int main(int argc, char** argv) {
     IPCThreadState::self()->setupPolling(&binderFd);
     if (binderFd < 0) {
         ALOGE("Cann't get binder fd!!!");
+        uv_loop_close(&uvLooper);
         return -1;
     }
     uv_poll_init(&uvLooper, &binderPoll, binderFd);
@@ -69,6 +70,18 @@ extern "C" int main(int argc, char** argv) {
     // obtain service manager
     sp<IServiceManager> sm(defaultServiceManager());
     ALOGI("systemd: defaultServiceManager(): %p", sm.get());
+
+#ifdef CONFIG_SYSTEM_WINDOW_SERVICE
+    sp<::os::wm::WindowManagerService> wms = sp<::os::wm::WindowManagerService>::make(&uvLooper);
+    if (!wms->ready()) {
+        ALOGE("Failed to start systemd service");
+        uv_poll_stop(&binderPoll);
+        uv_loop_close(&uvLooper);
+        return -1;
+    }
+
+    sm->addService(String16(::os::wm::WindowManagerService::name()), wms);
+#endif
 
 #ifdef CONFIG_SYSTEM_BRIGHTNESS_SERVICE
     sp<::os::brightness::BrightnessService> brightness =
@@ -84,11 +97,6 @@ extern "C" int main(int argc, char** argv) {
 #ifdef CONFIG_SYSTEM_ACTIVITY_SERVICE
     sp<::os::am::ActivityManagerService> ams = new ::os::am::ActivityManagerService(&uvLooper);
     sm->addService(String16(::os::app::ActivityManager::name()), ams);
-#endif
-
-#ifdef CONFIG_SYSTEM_WINDOW_SERVICE
-    sp<::os::wm::WindowManagerService> wms = sp<::os::wm::WindowManagerService>::make(&uvLooper);
-    sm->addService(String16(::os::wm::WindowManagerService::name()), wms);
 #endif
 
 #ifdef CONFIG_SYSTEM_ACTIVITY_SERVICE
