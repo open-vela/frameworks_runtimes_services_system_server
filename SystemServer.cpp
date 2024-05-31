@@ -25,7 +25,7 @@
 #include <uv.h>
 
 #ifdef CONFIG_SYSTEM_WINDOW_SERVICE
-#include "WindowManagerService.h"
+#include "wm/WMService.h"
 #endif
 
 #ifdef CONFIG_SYSTEM_PACKAGE_SERVICE
@@ -72,15 +72,13 @@ extern "C" int main(int argc, char** argv) {
     ALOGI("systemd: defaultServiceManager(): %p", sm.get());
 
 #ifdef CONFIG_SYSTEM_WINDOW_SERVICE
-    sp<::os::wm::WindowManagerService> wms = sp<::os::wm::WindowManagerService>::make(&uvLooper);
-    if (!wms->ready()) {
-        ALOGE("Failed to start systemd service");
+    sp<::os::wm::IWindowManager> wms = startWMService(sm, &uvLooper);
+    if (!wms) {
+        ALOGE("Failed to start window manager service");
         uv_poll_stop(&binderPoll);
         uv_loop_close(&uvLooper);
         return -1;
     }
-
-    sm->addService(String16(::os::wm::WindowManagerService::name()), wms);
 #endif
 
 #ifdef CONFIG_SYSTEM_BRIGHTNESS_SERVICE
