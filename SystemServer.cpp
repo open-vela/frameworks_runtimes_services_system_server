@@ -67,16 +67,18 @@ extern "C" int main(int argc, char** argv) {
     uv_poll_init(&uvLooper, &binderPoll, binderFd);
     uv_poll_start(&binderPoll, UV_READABLE, binderPollCallback);
 
+    std::shared_ptr<::os::app::UvLoop> mainLooper = std::make_shared<::os::app::UvLoop>(&uvLooper);
+
     // obtain service manager
     sp<IServiceManager> sm(defaultServiceManager());
     ALOGI("systemd: defaultServiceManager(): %p", sm.get());
 
 #ifdef CONFIG_SYSTEM_WINDOW_SERVICE
-    sp<::os::wm::IWindowManager> wms = startWMService(sm, &uvLooper);
+    sp<::os::wm::IWindowManager> wms = startWMService(sm, mainLooper);
     if (!wms) {
         ALOGE("Failed to start window manager service");
         uv_poll_stop(&binderPoll);
-        uv_loop_close(&uvLooper);
+        uv_loop_close(mainLooper->get());
         return -1;
     }
 #endif
