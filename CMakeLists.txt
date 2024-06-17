@@ -29,6 +29,10 @@ if(CONFIG_SYSTEM_SERVER)
     list(APPEND CUR_DEPENDS activity_manager)
   endif()
 
+  if(CONFIG_SYSTEM_BRIGHTNESS_SERVICE)
+    list(APPEND CUR_DEPENDS brightness_service)
+  endif()
+
   nuttx_add_application(
     NAME
     systemd
