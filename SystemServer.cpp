@@ -18,6 +18,7 @@
 #include <binder/IPCThreadState.h>
 #include <binder/IServiceManager.h>
 #include <binder/ProcessState.h>
+#include <nuttx/arch.h>
 #include <nuttx/config.h>
 #include <utils/Log.h>
 #include <utils/Looper.h>
