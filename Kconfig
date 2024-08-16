@@ -37,5 +37,6 @@ config SYSTEM_SERVER_PRIORITY
 config SYSTEM_SERVER_USE_PROFILER
     bool "Runtime profiler"
     default n
+    depends on ANDROID_LIBUTILS
 
 endif
