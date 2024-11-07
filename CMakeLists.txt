@@ -15,6 +15,8 @@
 #
 
 if(CONFIG_SYSTEM_SERVER)
+  nuttx_add_prebuilt(APP_TARGETS systemd)
+
   set(CUR_DEPENDS android_binder)
 
   if(CONFIG_SYSTEM_WINDOW_SERVICE)
