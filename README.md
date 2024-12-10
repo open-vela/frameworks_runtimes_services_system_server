@@ -10,6 +10,7 @@ System Services is one of the core components of the openvela operating system. 
 3. Window Management Service
 4. Brightness Management Service
 
+
 **Figure 1** System Services Architecture Diagram
 
 ![System Services Architecture](./docs/SystemServer_Architecture.jpg)
