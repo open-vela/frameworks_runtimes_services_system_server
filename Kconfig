@@ -21,6 +21,10 @@ config SYSTEM_SERVER
 	depends on LIBUV
 
 if SYSTEM_SERVER
+config SYSTEM_SERVER_LITE
+    bool "System server Single-Instance Rendering Mode"
+    default n
+    depends on !LV_ENABLE_GLOBAL_CUSTOM
 
 config SYSTEM_SERVER_APP_STACKSIZE
 	int "systemd and app default stack size"
