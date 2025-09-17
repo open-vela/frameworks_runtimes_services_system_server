@@ -91,7 +91,7 @@ extern "C" int main(int argc, char** argv) {
 #endif
 
 #ifdef CONFIG_SYSTEM_PACKAGE_SERVICE
-    sp<::os::pm::PackageManagerService> pms = new ::os::pm::PackageManagerService();
+    sp<::os::pm::PackageManagerService> pms = new ::os::pm::PackageManagerService(&uvLooper);
     sm->addService(::os::pm::PackageManagerService::name(), pms);
 #endif
 
