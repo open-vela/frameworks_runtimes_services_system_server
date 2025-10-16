@@ -42,6 +42,9 @@
 #include <BrightnessService.h>
 #endif
 
+#include "XMSConfig.h"
+#include "ash/message_loop/message_loop.h"
+
 using namespace android;
 using android::binder::Status;
 
@@ -100,11 +103,17 @@ extern "C" int main(int argc, char** argv) {
     sm->addService(String16(::os::app::ActivityManager::name()), ams);
 #endif
 
+    std::unique_ptr<ash::MessageLoop> messageLoop =
+            xmsLiteMode() ? ash::MessageLoop::CreateForUV(&uvLooper) : nullptr;
+
 #ifdef CONFIG_SYSTEM_ACTIVITY_SERVICE
     ams->setWindowManager(wms);
     ams->systemReady();
 #endif
 
     uv_run(&uvLooper, UV_RUN_DEFAULT);
+    if (messageLoop) {
+        messageLoop.reset();
+    }
     return 0;
 }

@@ -35,6 +35,8 @@ if(CONFIG_SYSTEM_SERVER)
     list(APPEND CUR_DEPENDS brightness_service)
   endif()
 
+  list(APPEND CUR_DEPENDS ash)
+
   nuttx_add_application(
     NAME
     systemd
