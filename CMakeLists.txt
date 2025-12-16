@@ -35,7 +35,9 @@ if(CONFIG_SYSTEM_SERVER)
     list(APPEND CUR_DEPENDS brightness_service)
   endif()
 
+  if(CONFIG_LIBASH)
   list(APPEND CUR_DEPENDS ash)
+  endif()
 
   nuttx_add_application(
     NAME

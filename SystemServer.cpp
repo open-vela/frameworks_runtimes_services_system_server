@@ -43,7 +43,9 @@
 #endif
 
 #include "XMSConfig.h"
+#ifdef CONFIG_LIBASH
 #include "ash/message_loop/message_loop.h"
+#endif
 
 using namespace android;
 using android::binder::Status;
@@ -103,8 +105,10 @@ extern "C" int main(int argc, char** argv) {
     sm->addService(String16(::os::app::ActivityManager::name()), ams);
 #endif
 
+#ifdef CONFIG_LIBASH
     std::unique_ptr<ash::MessageLoop> messageLoop =
             xmsLiteMode() ? ash::MessageLoop::CreateForUV(&uvLooper) : nullptr;
+#endif
 
 #ifdef CONFIG_SYSTEM_ACTIVITY_SERVICE
     ams->setWindowManager(wms);
@@ -112,8 +116,10 @@ extern "C" int main(int argc, char** argv) {
 #endif
 
     uv_run(&uvLooper, UV_RUN_DEFAULT);
+#ifdef CONFIG_LIBASH
     if (messageLoop) {
         messageLoop.reset();
     }
+#endif
     return 0;
 }

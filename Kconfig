@@ -25,6 +25,7 @@ config SYSTEM_SERVER_LITE
     bool "System server Single-Instance Rendering Mode"
     default n
     depends on !LV_ENABLE_GLOBAL_CUSTOM
+    depends on LIBASH
 
 config SYSTEM_SERVER_APP_STACKSIZE
 	int "systemd and app default stack size"
