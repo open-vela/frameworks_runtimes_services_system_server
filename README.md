@@ -1,75 +1,86 @@
 # System Server
 
-[English|[简体中文](./README_zh-cn.md)]
+[ English | [简体中文](./README_zh-cn.md) ]
 
 ## Introduction
 
-System Services is one of the core components of the openvela operating system. It is responsible for starting and managing multiple system services, including:
-1. Application Management Service
-2. Package Management Service
-3. Window Management Service
-4. Brightness Management Service
+**System Server** is a core component of the openvela operating system, responsible for starting, managing, and coordinating key system services. It acts as the "brain" of the system, maintaining its normal operational state.
 
-**Figure 1** System Services Architecture Diagram
+The current version includes the following core sub-services:
 
-![System Services Architecture](./docs/SystemServer_Architecture.jpg)
+1. Activity Manager Service (Activity Manager)
+2. Package Manager Service (Package Manager)
+3. Window Manager Service (Window Manager)
+4. Brightness Manager Service (Brightness Manager)
 
-Introduction to each sub-service:
+**Figure 1** System Server Architecture Diagram
 
-### 1. Application Management Service
-The Application Management Service is responsible for managing the lifecycle and task stack of application programs. It includes the following functions:
+![System Server Architecture](./docs/SystemServer_Architecture.png)
 
-- Manage the application lifecycle, such as starting, stopping, pausing and resuming application programs.
-- Manage the application task stack, such as creating, destroying, updating, etc.
-- Manage the memory usage of application programs, such as monitoring memory usage, low memory warnings, etc.
+## Sub-service Details
 
-### 2. Package Management Service
-The Package Management Service is responsible for managing the installation, uninstallation, updating and permissions of application programs. It includes the following functions:
+### 1. Activity Manager Service
 
-- Install, uninstall, and update application programs.
-- Manage application program permissions, including granting and revoking permissions, etc.
+The Activity Manager Service is responsible for managing the application lifecycle and task stack. It includes the following functions:
+
+- Manage application lifecycle, such as starting, stopping, pausing, and resuming applications.
+- Manage application task stacks, such as the creation, destruction, and updating of task stacks.
+- Manage application memory usage, such as monitoring memory usage, low memory warnings, etc.
+
+### 2. Package Manager Service
+
+The Package Manager Service is responsible for managing application installation, uninstallation, updates, and permissions. It includes the following functions:
+
+- Install, uninstall, and update applications.
+- Manage application permissions, including granting and revoking permissions.
 - Listen for application installation, uninstallation, and update events.
 
-### 3. Window Management Service
-The Window Management Service is responsible for managing the display and management of application program windows. It includes the following functions:
+### 3. Window Manager Service
 
-- Manage application program windows, including creating, displaying, hiding, closing, etc.
-- Manage the display properties of windows, such as size, position, etc.
-- Input event listening and processing, such as touch, key, etc.
+The Window Manager Service is responsible for the display and management of application windows. It includes the following functions:
+
+- Manage application windows, including creation, display, hiding, closing, etc.
+- Manage window display properties, such as size, position, etc.
+- Handle input event listening, such as touch, key presses, etc.
 - Manage window transition animations.
 
-### 4. Brightness Management Service
-The Brightness Management Service is responsible for managing the brightness of the screen. It includes the following functions:
+### 4. Brightness Manager Service
 
-- Manage the brightness of the screen.
+The Brightness Manager Service is responsible for managing screen brightness. It includes the following functions:
+
+- Manage screen brightness.
 - Listen for screen brightness change events.
 
-## Directory
+## Directory Structure
 
+```bash
+├── Kconfig              # Build configuration definition file, containing build switches for sub-services
+└── SystemServer.cpp     # System Server main program entry and startup logic
 ```
-├── Kconfig
-└── SystemServer.cpp
-```
 
-## Constraints
+## Compilation and Configuration
 
-- The `./Kconfig` file lists the configuration switches for the System Services' configurable sub-services. The corresponding configuration switches for each sub-service need to be enabled in the System Services' compilation options.
+System Server is compiled based on the **build system**. Before compiling, please ensure that the `Kconfig` options are correctly configured to include the required sub-services.
 
-## Instructions
+### Configuration Options (Kconfig)
 
-### Compilation and Execution
+Please enable the following options in the compilation configuration menu:
 
-The System Services use the Vela source code to build the system for compilation and execution. Before compiling the Vela source code, the corresponding compilation tools and dependency libraries need to be installed. When compiling the Vela source code, the System Server compilation option needs to be selected, and the compilation options for each service also need to be turned on accordingly, and then compiled.
+| Definition Name             | Description        | Remarks                                  |
+| :-------------------------- | :----------------- | :--------------------------------------- |
+| `SYSTEM_SERVER`             | **Main Switch**    | Must be enabled to compile System Server |
+| `SYSTEM_ACTIVITY_SERVICE`   | Activity Manager   | Optional component                       |
+| `SYSTEM_PACKAGE_SERVICE`    | Package Manager    | Optional component                       |
+| `SYSTEM_WINDOW_SERVICE`     | Window Manager     | Optional component                       |
+| `SYSTEM_BRIGHTNESS_SERVICE` | Brightness Manager | Optional component                       |
 
-The configuration options are as follows:
-- `SYSTEM_SERVER`: This option needs to be turned on for compiling the System Services.
-- `SYSTEM_ACTIVITY_SERVICE`: This option needs to be turned on for compiling the Application Management Service.
-- `SYSTEM_PACKAGE_SERVICE`: This option needs to be turned on for compiling the Package Management Service.
-- `SYSTEM_WINDOW_SERVICE`: This option needs to be turned on for compiling the Window Management Service.
-- `SYSTEM_BRIGHTNESS_SERVICE`: This option needs to be turned on for compiling the Brightness Management Service.
+## Run Guide
 
-Running `SystemServer` on the device requires root privileges. `SystemServer` can be started to run in the background via the adb command, as shown below:
+Running `SystemServer` on the target device requires **Root permissions**.
 
-```
+You can manually start the service in the background via ADB:
+
+```bash
+# Note: The generated binary filename is assumed to be systemd; please adjust according to the actual build output
 adb shell systemd &
 ```
